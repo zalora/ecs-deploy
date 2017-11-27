@@ -32,6 +32,7 @@ Usage
                                             Max definitions causes all task revisions not matching criteria to be deregistered, even if they're created manually.
                                             Script will only perform deregistration if deployment succeeds.
         --enable-rollback             Rollback task definition if new version is not running before TIMEOUT
+        --impatient                   Impatient mode. Exit without waiting for the blue/green transition.
         -v | --verbose                Verbose output
 
     Examples:

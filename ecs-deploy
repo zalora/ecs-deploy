@@ -15,6 +15,7 @@ TAGONLY=""
 ENABLE_ROLLBACK=false
 AWS_CLI=$(which aws)
 AWS_ECS="$AWS_CLI --output json ecs"
+IMPATIENT=false
 
 function usage() {
     cat <<EOM
@@ -47,6 +48,7 @@ Optional arguments:
     -to | --tag-only        New tag to apply to all images defined in the task (multi-container task). If provided this will override value specified in image name argument.
     --max-definitions       Number of Task Definition Revisions to persist before deregistering oldest revisions.
     --enable-rollback       Rollback task definition if new version is not running before TIMEOUT
+    --impatient             Impatient mode. Exit without waiting for the blue/green transition.
     -v | --verbose          Verbose output
 
 Requirements:
@@ -493,6 +495,9 @@ if [ "$BASH_SOURCE" == "$0" ]; then
             --enable-rollback)
                 ENABLE_ROLLBACK=true
                 ;;
+            --impatient)
+                IMPATIENT=true
+                ;;
             -v|--verbose)
                 VERBOSE=true
                 ;;
@@ -532,7 +537,9 @@ if [ "$BASH_SOURCE" == "$0" ]; then
     else
         updateService
 
-        waitForGreenDeployment
+        if [ $IMPATIENT == false ]; then
+            waitForGreenDeployment
+        fi
     fi
 
     exit 0
